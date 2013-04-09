@@ -21,8 +21,10 @@ import com.stackmob.core.DatastoreException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.*;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -35,8 +37,9 @@ import java.util.Map;
 
 /**
  * This example will show a user how to write a custom code method
- * with three parameters `model`, `make`, and `year`
- * which creates an object in the car schema.
+ * with three parameters `model`, `make`, and `year` which creates
+ * an object in the car schema. We will be using the POST verb
+ * method of parsing parameters from the JSON body.
  */
 
 public class CreateObject implements CustomCodeMethod {
@@ -80,6 +83,12 @@ public class CreateObject implements CustomCodeMethod {
 
     // I'll be using this map to print messages to console as feedback to the operation
     Map<String, SMValue> feedback = new HashMap<String, SMValue>();
+
+    if (Util.strNullCheck(make) || Util.strNullCheck(model) || Util.strNullCheck(year)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
 
     feedback.put("model", new SMString(model));
     feedback.put("make", new SMString(make));

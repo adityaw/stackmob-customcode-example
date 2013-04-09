@@ -21,6 +21,7 @@ import com.stackmob.core.DatastoreException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.*;
 
@@ -53,10 +54,17 @@ public class DeleteMultiple implements CustomCodeMethod {
     DataService ds = serviceProvider.getDataService();
     List<SMObject> results;
 
+    String make = request.getParams().get("make");
+
+    if (Util.strNullCheck(make)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
+
     try {
-      SMString make = new SMString(request.getParams().get("make"));
       // Create a query condition to match all car objects to the `make` that was passed in
-      query.add(new SMEquals("make", make));
+      query.add(new SMEquals("make", new SMString(make)));
       results = ds.readObjects("car", query); // Read all objects in `car` schema that match the query
 
       if (results != null && results.size() > 0) {

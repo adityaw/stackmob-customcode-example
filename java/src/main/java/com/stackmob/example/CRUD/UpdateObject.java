@@ -21,6 +21,7 @@ import com.stackmob.core.DatastoreException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.*;
 import org.json.simple.JSONObject;
@@ -70,6 +71,12 @@ public class UpdateObject implements CustomCodeMethod {
 
     } catch (ParseException pe) {
       logger.error(pe.getMessage(), pe);
+    }
+
+    if (Util.strNullCheck(year) || Util.strNullCheck(carID)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
     }
 
     Map<String, SMValue> feedback = new HashMap<String, SMValue>();

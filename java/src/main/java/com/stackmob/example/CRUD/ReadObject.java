@@ -21,6 +21,7 @@ import com.stackmob.core.InvalidSchemaException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.*;
 
 import java.net.HttpURLConnection;
@@ -51,13 +52,20 @@ public class ReadObject implements CustomCodeMethod {
     // I'll be using this map to print messages to console as feedback to the operation
     Map<String, SMObject> feedback = new HashMap<String, SMObject>();
 
+    String carID = request.getParams().get("car_ID");
+    if (Util.strNullCheck(carID)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
+
     DataService ds = serviceProvider.getDataService();
     List<SMCondition> query = new ArrayList<SMCondition>();
     List<SMObject> results;
 
     try {
       // Create a new condition to match results to, in this case, matching IDs (primary key)
-      query.add(new SMEquals("car_id", new SMString(request.getParams().get("car_ID"))));
+      query.add(new SMEquals("car_id", new SMString(carID)));
       results = ds.readObjects("car", query);  // Read objects from the `car` schema
 
       if (results != null && results.size() > 0) {

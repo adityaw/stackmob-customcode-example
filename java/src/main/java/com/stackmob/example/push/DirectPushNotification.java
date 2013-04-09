@@ -21,6 +21,7 @@ import com.stackmob.core.ServiceNotActivatedException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.*;
 
 import java.net.HttpURLConnection;
@@ -49,6 +50,12 @@ public class DirectPushNotification implements CustomCodeMethod {
 
     Map<String, String> payload = new HashMap<String, String>();
     String user = request.getParams().get("user_name");
+
+    if (Util.strNullCheck(user)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
 
     try {
       PushService ps = serviceProvider.getPushService();

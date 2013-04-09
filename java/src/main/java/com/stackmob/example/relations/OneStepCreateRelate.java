@@ -21,6 +21,7 @@ import com.stackmob.core.DatastoreException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.*;
 
@@ -42,7 +43,7 @@ public class OneStepCreateRelate implements CustomCodeMethod {
 
   @Override
   public List<String> getParams() {
-    return Arrays.asList("name");
+    return Arrays.asList("user_name");
   }
 
   @Override
@@ -50,6 +51,12 @@ public class OneStepCreateRelate implements CustomCodeMethod {
     Map<String, List<SMObject>> feedback = new HashMap<String, List<SMObject>>();
     LoggerService logger = serviceProvider.getLoggerService(OneStepCreateRelate.class);
 
+    String owner = request.getParams().get("user_name");
+    if (Util.strNullCheck(owner)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
 
     // These are some example cars that will be created
     Map<String, SMValue> carValues1 = new HashMap<String, SMValue>();
@@ -71,15 +78,13 @@ public class OneStepCreateRelate implements CustomCodeMethod {
     DataService ds = serviceProvider.getDataService();
 
     try {
-      SMString owner = new SMString(request.getParams().get("name"));
-
       /**
        * In the `user` schema we are going to add our list of `cars` to the `garage` (one-to-many) relation
        * found in the `owner` specified by the input
        */
-      BulkResult result = ds.createRelatedObjects("user", owner, "garage", cars);
+      BulkResult result = ds.createRelatedObjects("user", new SMString(owner), "garage", cars);
 
-      feedback.put(owner.getValue() + " now owns", cars);
+      feedback.put(owner + " now owns", cars);
 
     } catch (InvalidSchemaException ise) {
       HashMap<String, String> errMap = new HashMap<String, String>();

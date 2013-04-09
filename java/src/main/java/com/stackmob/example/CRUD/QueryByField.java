@@ -21,6 +21,7 @@ import com.stackmob.core.DatastoreException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.*;
 
@@ -48,20 +49,25 @@ public class QueryByField implements CustomCodeMethod {
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     Map<String, List<SMObject>> feedback = new HashMap<String, List<SMObject>>();
-    List<SMCondition> query = new ArrayList<SMCondition>();
 
+    String make = request.getParams().get("make");
+    if (Util.strNullCheck(make)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
+
+    List<SMCondition> query = new ArrayList<SMCondition>();
     DataService ds = serviceProvider.getDataService();
     List<SMObject> results;
 
     try {
-      SMString make = new SMString(request.getParams().get("make"));
-
       // Create a query condition to match all car objects to the `make` that was passed in
-      query.add(new SMEquals("make", make));
+      query.add(new SMEquals("make", new SMString(make)));
       results = ds.readObjects("car", query);
 
       if (results != null && results.size() > 0) {
-        feedback.put(make.getValue(), results);
+        feedback.put(make, results);
       }
 
     } catch (InvalidSchemaException ise) {

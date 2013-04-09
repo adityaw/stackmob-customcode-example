@@ -21,6 +21,7 @@ import com.stackmob.core.DatastoreException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.*;
 
@@ -54,11 +55,16 @@ public class DeleteRelation implements CustomCodeMethod {
     DataService ds = serviceProvider.getDataService();
     List<SMValue> valuesToRemove = new ArrayList<SMValue>();
 
-    try {
-      SMString owner = new SMString(request.getParams().get("user_name"));
-      SMString carID = new SMString(request.getParams().get("car_ID"));
+    String carID = request.getParams().get("car_ID");
+    String owner = request.getParams().get("user_name");
+    if (Util.strNullCheck(carID) || Util.strNullCheck(owner)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
 
-      valuesToRemove.add(carID);
+    try {
+      valuesToRemove.add(new SMString(carID));
 
       /**
        * This function will remove any values present in `valuesToRemove` from the garage
@@ -66,7 +72,7 @@ public class DeleteRelation implements CustomCodeMethod {
        * The boolean False signifies that we do not want to engage in a cascade deletion,
        * which not only removes the relationship, but deletes the object as well.
        */
-      ds.removeRelatedObjects("user", owner, "garage", valuesToRemove, false);
+      ds.removeRelatedObjects("user", new SMString(owner), "garage", valuesToRemove, false);
     } catch (InvalidSchemaException ise) {
       logger.error(ise.getMessage(), ise);
     } catch (DatastoreException dse) {

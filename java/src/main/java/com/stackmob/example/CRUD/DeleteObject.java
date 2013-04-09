@@ -21,6 +21,7 @@ import com.stackmob.core.InvalidSchemaException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.*;
 
 import java.net.HttpURLConnection;
@@ -50,12 +51,19 @@ public class DeleteObject implements CustomCodeMethod {
     Map<String, SMObject> feedback = new HashMap<String, SMObject>();
 
     DataService ds = serviceProvider.getDataService();
+    String carID = request.getParams().get("car_ID");
+
+    if (Util.strNullCheck(carID)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
 
     try {
       /* In order to get the parameters (in this case car_ID)
        * from a DELETE operation, you must use request.getParams
        */
-      ds.deleteObject("car", new SMString(request.getParams().get("car_ID")));
+      ds.deleteObject("car", new SMString(carID));
     } catch (InvalidSchemaException ise) {
       logger.error(ise.getMessage(), ise);
     } catch (DatastoreException dse) {

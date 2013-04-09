@@ -21,6 +21,7 @@ import com.stackmob.core.DatastoreException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.*;
 
@@ -54,17 +55,22 @@ public class RelateToParent implements CustomCodeMethod {
     List<SMValue> valuesToAppend = new ArrayList<SMValue>();
     SMObject result;
 
-    try {
-      SMString owner = new SMString(request.getParams().get("user_name"));
-      SMString carID = new SMString(request.getParams().get("car_ID"));
+    String carID = request.getParams().get("car_ID");
+    String owner = request.getParams().get("user_name");
+    if (Util.strNullCheck(owner) || Util.strNullCheck(carID)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
 
+    try {
       /* In the `user` schema we are going to add the car specified by ID to the `garage` (one-to-many) relation
        * specified by the input `user_name`
        */
-      valuesToAppend.add(carID);
-      result = ds.addRelatedObjects("user", owner, "garage", valuesToAppend);
+      valuesToAppend.add(new SMString(carID));
+      result = ds.addRelatedObjects("user", new SMString(owner), "garage", valuesToAppend);
 
-      feedback.put("added " + carID.getValue() + "to", result);
+      feedback.put("added " + carID + "to", result);
     } catch (InvalidSchemaException ise) {
       logger.error(ise.getMessage(), ise);
     } catch (DatastoreException dse) {

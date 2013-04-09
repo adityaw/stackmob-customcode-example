@@ -21,6 +21,7 @@ import com.stackmob.core.DatastoreException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.*;
 
@@ -30,8 +31,8 @@ import java.util.*;
 /**
  * This example will show a user how to write a custom code method
  * with one parameter `year` that queries the `car` schema for all objects
- * that match the condition (ie greater than, less than, order by) when
- * applied to the given year field
+ * that match the condition (ie greater than, less than) when
+ * applied to the given year field, and then sorts them.
  */
 
 public class QueryByEquality implements CustomCodeMethod {
@@ -48,9 +49,15 @@ public class QueryByEquality implements CustomCodeMethod {
 
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
-
     Map<String, List<SMObject>> feedback = new HashMap<String, List<SMObject>>();
     List<SMCondition> query = new ArrayList<SMCondition>();
+
+    String year = request.getParams().get("year");
+    if (Util.strNullCheck(year)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
 
     // We are going to primarily sort by year (ascending) and then by createddate in reverse-chrono
     List<SMOrdering> orderings = Arrays.asList(
@@ -62,10 +69,8 @@ public class QueryByEquality implements CustomCodeMethod {
     List<SMObject> results;
 
     try {
-      SMInt year = new SMInt(Long.parseLong(request.getParams().get("year")));
-
       // We only want years greater than or equal to the user input
-      query.add(new SMGreaterOrEqual("year", year));
+      query.add(new SMGreaterOrEqual("year", new SMInt(Long.parseLong(year))));
       results = ds.readObjects("car", query, 0, filters);
 
       if (results != null && results.size() > 0) {

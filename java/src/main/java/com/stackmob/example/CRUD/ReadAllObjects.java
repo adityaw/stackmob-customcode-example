@@ -21,6 +21,7 @@ import com.stackmob.core.InvalidSchemaException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -59,8 +60,14 @@ public class ReadAllObjects implements CustomCodeMethod {
     // We don't have to edit the query because we want to read ALL objects
     List<SMObject> results;
 
+    String schema = request.getParams().get("schema_name");
+    if (Util.strNullCheck(schema)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    }
+
     try {
-      String schema = request.getParams().get("schema_name");
       // Read objects from the schema that was passed in
       results = ds.readObjects(schema, query);
 

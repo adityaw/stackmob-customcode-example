@@ -21,6 +21,7 @@ import com.stackmob.core.InvalidSchemaException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.*;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -66,6 +67,12 @@ public class WriteGeo implements CustomCodeMethod {
       longitude = (String) jsonObject.get("Longitude");
     } catch (ParseException pe) {
       logger.error(pe.getMessage(), pe);
+    }
+
+    if (Util.strNullCheck(user) || Util.strNullCheck(latitude) || Util.strNullCheck(longitude)){
+      HashMap<String, String> errMap = new HashMap<String, String>();
+      errMap.put("error", "Please fill in all parameters correctly");
+      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
     }
 
     DataService ds = serviceProvider.getDataService();
