@@ -56,6 +56,7 @@ public class UpdateObject implements CustomCodeMethod {
 
     LoggerService logger = serviceProvider.getLoggerService(UpdateObject.class);
     logger.debug(request.getBody());
+    HashMap<String, String> errMap = new HashMap<String, String>();
 
     /* The following try/catch block shows how to properly fetch parameters for PUT/POST operations
      * from the JSON request body
@@ -73,10 +74,8 @@ public class UpdateObject implements CustomCodeMethod {
       logger.error(pe.getMessage(), pe);
     }
 
-    if (Util.strNullCheck(year) || Util.strNullCheck(carID)){
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "Please fill in all parameters correctly");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    if (Util.checkForNulls(year, carID)){
+      return Util.badRequestResponse(errMap);
     }
 
     Map<String, SMValue> feedback = new HashMap<String, SMValue>();
@@ -96,17 +95,12 @@ public class UpdateObject implements CustomCodeMethod {
       result = ds.updateObject("car", new SMString(carID), update);
       feedback.put("updated object", result);
 
-    } catch (InvalidSchemaException ise) {
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "invalid_schema");
-      errMap.put("detail", ise.toString());
-      return new ResponseToProcess(HttpURLConnection.HTTP_INTERNAL_ERROR, errMap); // http 500 - internal server error
-
-    } catch (DatastoreException dse) {
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "datastore_exception");
-      errMap.put("detail", dse.toString());
-      return new ResponseToProcess(HttpURLConnection.HTTP_INTERNAL_ERROR, errMap); // http 500 - internal server error
+    }
+    catch (InvalidSchemaException ise) {
+      return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
+    }
+    catch (DatastoreException dse) {
+      return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 
     return new ResponseToProcess(HttpURLConnection.HTTP_OK, feedback);

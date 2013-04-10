@@ -56,6 +56,7 @@ public class SMPushRegisterDevice implements CustomCodeMethod {
 
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
+    HashMap<String, String> errParams = new HashMap<String, String>();
     int responseCode = 0;
     String responseBody = "";
     TokenType deviceTokenType;
@@ -68,15 +69,11 @@ public class SMPushRegisterDevice implements CustomCodeMethod {
     logger.debug("Device token: " + deviceToken + ", " + "Token Type: " + tokenType);
 
     if (Util.strNullCheck(deviceToken)) {
-      HashMap<String, String> errParams = new HashMap<String, String>();
-      errParams.put("error", "the device token passed was null or empty.");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errParams); // http 400 - bad request
+      return Util.badRequestResponse(errParams, "the device token passed was null or empty."); // http 400 - bad request
     }
 
     if (Util.strNullCheck(tokenType)) {
-      HashMap<String, String> errParams = new HashMap<String, String>();
-      errParams.put("error", "the token type passed was null or empty.");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errParams); // http 400 - bad request
+      return Util.badRequestResponse(errParams, "the token type passed was null or empty."); // http 400 - bad request
     }
 
     // Check if the input token type was one of the 3 supported services
@@ -87,7 +84,6 @@ public class SMPushRegisterDevice implements CustomCodeMethod {
     } else if  (tokenType.equals("c2dm")) {
       deviceTokenType = TokenType.Android;
     } else {
-      HashMap<String, String> errParams = new HashMap<String, String>();
       errParams.put("error", "the token type passed was not valid, must be ios, c2dm or gcm");
       return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errParams); // http 400 - bad request
     }

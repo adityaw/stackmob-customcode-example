@@ -51,12 +51,11 @@ public class ReadObject implements CustomCodeMethod {
 
     // I'll be using this map to print messages to console as feedback to the operation
     Map<String, SMObject> feedback = new HashMap<String, SMObject>();
+    HashMap<String, String> errMap = new HashMap<String, String>();
 
     String carID = request.getParams().get("car_ID");
-    if (Util.strNullCheck(carID)){
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "Please fill in all parameters correctly");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    if (Util.checkForNulls(carID)){
+      return Util.badRequestResponse(errMap);
     }
 
     DataService ds = serviceProvider.getDataService();

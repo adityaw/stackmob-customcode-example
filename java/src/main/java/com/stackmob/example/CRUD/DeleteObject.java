@@ -49,14 +49,13 @@ public class DeleteObject implements CustomCodeMethod {
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     LoggerService logger = serviceProvider.getLoggerService(DeleteObject.class);
     Map<String, SMObject> feedback = new HashMap<String, SMObject>();
+    HashMap<String, String> errMap = new HashMap<String, String>();
 
     DataService ds = serviceProvider.getDataService();
     String carID = request.getParams().get("car_ID");
 
-    if (Util.strNullCheck(carID)){
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "Please fill in all parameters correctly");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    if (Util.checkForNulls(carID)){
+      return Util.badRequestResponse(errMap);
     }
 
     try {

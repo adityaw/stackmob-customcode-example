@@ -49,6 +49,7 @@ public class DeleteMultiple implements CustomCodeMethod {
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     Map<String, List<SMObject>> feedback = new HashMap<String, List<SMObject>>();
+    HashMap<String, String> errMap = new HashMap<String, String>();
 
     List<SMCondition> query = new ArrayList<SMCondition>();
     DataService ds = serviceProvider.getDataService();
@@ -56,10 +57,8 @@ public class DeleteMultiple implements CustomCodeMethod {
 
     String make = request.getParams().get("make");
 
-    if (Util.strNullCheck(make)){
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "Please fill in all parameters correctly");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    if (Util.checkForNulls(make)){
+      return Util.badRequestResponse(errMap);
     }
 
     try {
@@ -75,17 +74,12 @@ public class DeleteMultiple implements CustomCodeMethod {
         }
       }
 
-    } catch (InvalidSchemaException ise) {
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "invalid_schema");
-      errMap.put("detail", ise.toString());
-      return new ResponseToProcess(HttpURLConnection.HTTP_INTERNAL_ERROR, errMap); // http 500 - internal server error
-
-    } catch (DatastoreException dse) {
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "datastore_exception");
-      errMap.put("detail", dse.toString());
-      return new ResponseToProcess(HttpURLConnection.HTTP_INTERNAL_ERROR, errMap); // http 500 - internal server error
+    }
+    catch (InvalidSchemaException ise) {
+      return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
+    }
+    catch (DatastoreException dse) {
+      return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 
     return new ResponseToProcess(HttpURLConnection.HTTP_OK, feedback);

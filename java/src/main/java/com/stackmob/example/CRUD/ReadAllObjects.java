@@ -54,6 +54,7 @@ public class ReadAllObjects implements CustomCodeMethod {
 
     // I'll be using this map to print messages to console as feedback to the operation
     Map<String, List<SMObject>> feedback = new HashMap<String, List<SMObject>>();
+    HashMap<String, String> errMap = new HashMap<String, String>();
 
     DataService ds = serviceProvider.getDataService();
     List<SMCondition> query = new ArrayList<SMCondition>();
@@ -61,10 +62,8 @@ public class ReadAllObjects implements CustomCodeMethod {
     List<SMObject> results;
 
     String schema = request.getParams().get("schema_name");
-    if (Util.strNullCheck(schema)){
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "Please fill in all parameters correctly");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    if (Util.checkForNulls(schema)){
+      return Util.badRequestResponse(errMap);
     }
 
     try {

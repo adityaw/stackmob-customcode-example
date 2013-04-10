@@ -81,13 +81,12 @@ public class CreateObject implements CustomCodeMethod {
       logger.error(pe.getMessage(), pe);
     }
 
-    // I'll be using this map to print messages to console as feedback to the operation
+    // I'll be using these maps to print messages to console as feedback to the operation
     Map<String, SMValue> feedback = new HashMap<String, SMValue>();
+    HashMap<String, String> errMap = new HashMap<String, String>();
 
-    if (Util.strNullCheck(make) || Util.strNullCheck(model) || Util.strNullCheck(year)){
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "Please fill in all parameters correctly");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    if (Util.checkForNulls(model, make, year)){
+      return Util.badRequestResponse(errMap);
     }
 
     feedback.put("model", new SMString(model));
@@ -98,17 +97,12 @@ public class CreateObject implements CustomCodeMethod {
     try {
       // This is how you create an object in the `car` schema
       ds.createObject("car", new SMObject(feedback));
-    } catch (InvalidSchemaException ise) {
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "invalid_schema");
-      errMap.put("detail", ise.toString());
-      return new ResponseToProcess(HttpURLConnection.HTTP_INTERNAL_ERROR, errMap); // http 500 - internal server error
-
-    } catch (DatastoreException dse) {
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "datastore_exception");
-      errMap.put("detail", dse.toString());
-      return new ResponseToProcess(HttpURLConnection.HTTP_INTERNAL_ERROR, errMap); // http 500 - internal server error
+    }
+    catch (InvalidSchemaException ise) {
+      return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
+    }
+    catch (DatastoreException dse) {
+      return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 
     return new ResponseToProcess(HttpURLConnection.HTTP_OK, feedback);

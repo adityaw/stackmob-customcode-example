@@ -49,6 +49,7 @@ public class RelateToParent implements CustomCodeMethod {
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     Map<String, SMObject> feedback = new HashMap<String, SMObject>();
+    HashMap<String, String> errMap = new HashMap<String, String>();
     LoggerService logger = serviceProvider.getLoggerService(RelateToParent.class);
 
     DataService ds = serviceProvider.getDataService();
@@ -57,10 +58,8 @@ public class RelateToParent implements CustomCodeMethod {
 
     String carID = request.getParams().get("car_ID");
     String owner = request.getParams().get("user_name");
-    if (Util.strNullCheck(owner) || Util.strNullCheck(carID)){
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "Please fill in all parameters correctly");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    if (Util.checkForNulls(owner, carID)){
+      return Util.badRequestResponse(errMap);
     }
 
     try {

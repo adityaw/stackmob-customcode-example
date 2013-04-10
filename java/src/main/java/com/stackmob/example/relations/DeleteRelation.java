@@ -50,6 +50,7 @@ public class DeleteRelation implements CustomCodeMethod {
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     Map<String, SMObject> feedback = new HashMap<String, SMObject>();
+    HashMap<String, String> errMap = new HashMap<String, String>();
     LoggerService logger = serviceProvider.getLoggerService(DeleteRelation.class);
 
     DataService ds = serviceProvider.getDataService();
@@ -57,10 +58,8 @@ public class DeleteRelation implements CustomCodeMethod {
 
     String carID = request.getParams().get("car_ID");
     String owner = request.getParams().get("user_name");
-    if (Util.strNullCheck(carID) || Util.strNullCheck(owner)){
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "Please fill in all parameters correctly");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    if (Util.checkForNulls(carID, owner)){
+      return Util.badRequestResponse(errMap);
     }
 
     try {

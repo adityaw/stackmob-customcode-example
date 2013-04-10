@@ -47,14 +47,13 @@ public class DirectPushNotification implements CustomCodeMethod {
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     LoggerService logger = serviceProvider.getLoggerService(DirectPushNotification.class);
+    HashMap<String, String> errMap = new HashMap<String, String>();
 
     Map<String, String> payload = new HashMap<String, String>();
     String user = request.getParams().get("user_name");
 
-    if (Util.strNullCheck(user)){
-      HashMap<String, String> errMap = new HashMap<String, String>();
-      errMap.put("error", "Please fill in all parameters correctly");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+    if (Util.checkForNulls(user)){
+      return Util.badRequestResponse(errMap);
     }
 
     try {
