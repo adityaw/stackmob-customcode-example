@@ -21,6 +21,7 @@ import com.stackmob.core.ServiceNotActivatedException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.*;
 import com.stackmob.sdkapi.PushService;
 
@@ -50,6 +51,7 @@ public class BroadcastPushNotification implements CustomCodeMethod {
     LoggerService logger = serviceProvider.getLoggerService(BroadcastPushNotification.class);
 
     Map<String, String> payload = new HashMap<String, String>();
+    Map<String, String> errMap = new HashMap<String, String>();
 
     try {
       PushService ps = serviceProvider.getPushService();
@@ -62,9 +64,9 @@ public class BroadcastPushNotification implements CustomCodeMethod {
       logger.debug("Broadcasted Push notification");
 
     } catch (ServiceNotActivatedException e){
-      logger.error(e.getMessage(), e);
+      return Util.internalErrorResponse("service not activated", e, errMap);
     } catch (PushServiceException e){
-      logger.error(e.getMessage(), e);
+      return Util.internalErrorResponse("Push Service Exception", e, errMap);
     }
 
     return new ResponseToProcess(HttpURLConnection.HTTP_OK, payload);

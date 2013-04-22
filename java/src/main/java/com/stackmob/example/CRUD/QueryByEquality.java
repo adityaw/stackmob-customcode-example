@@ -50,7 +50,7 @@ public class QueryByEquality implements CustomCodeMethod {
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     Map<String, List<SMObject>> feedback = new HashMap<String, List<SMObject>>();
-    HashMap<String, String> errMap = new HashMap<String, String>();
+    Map<String, String> errMap = new HashMap<String, String>();
     List<SMCondition> query = new ArrayList<SMCondition>();
 
     String year = request.getParams().get("year");
@@ -76,11 +76,9 @@ public class QueryByEquality implements CustomCodeMethod {
         feedback.put("results", results);
       }
 
-    }
-    catch (InvalidSchemaException ise) {
+    } catch (InvalidSchemaException ise) {
       return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
-    }
-    catch (DatastoreException dse) {
+    } catch (DatastoreException dse) {
       return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 

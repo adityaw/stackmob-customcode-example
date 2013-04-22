@@ -19,6 +19,7 @@ package com.stackmob.example.util;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.LoggerService;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.SMInt;
@@ -51,10 +52,11 @@ public class Logging implements CustomCodeMethod {
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     // Initialize logger to "Classnamehere.class" when calling serviceProvider.getLoggerService()
     LoggerService logger = serviceProvider.getLoggerService(Logging.class);
+    Map<String, String> errMap = new HashMap<String, String>();
 
     String model = "";
-    String make = "";
-    String year = "";
+    String make  = "";
+    String year  = "";
 
     JSONParser parser = new JSONParser();
 
@@ -66,8 +68,8 @@ public class Logging implements CustomCodeMethod {
       Object obj = parser.parse(request.getBody());
       JSONObject jsonObject = (JSONObject) obj;
       model = (String) jsonObject.get("model");
-      make = (String) jsonObject.get("make");
-      year = (String) jsonObject.get("year");
+      make  = (String) jsonObject.get("make");
+      year  = (String) jsonObject.get("year");
 
       logger.debug("Model: " + model);
       logger.debug("Make: " + make);
@@ -75,6 +77,7 @@ public class Logging implements CustomCodeMethod {
     } catch (ParseException pe) {
       // error("Message", Throwable)
       logger.error(pe.getMessage(), pe);
+      return Util.internalErrorResponse("Parse Exception", pe, errMap);
     }
 
     Map<String, Object> map = new HashMap<String, Object>();

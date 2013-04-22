@@ -14,11 +14,11 @@ import java.util.Map;
 
 public class Util {
 
-  static public Boolean strNullCheck(String str) {
+  public static Boolean strNullCheck(String str) {
     return (str == null || str.isEmpty());
   }
 
-  static public Boolean checkForNulls(String... strings){
+  public static Boolean checkForNulls(String... strings){
     for (String s : strings){
       if(strNullCheck(s)){
         return true;
@@ -27,20 +27,20 @@ public class Util {
     return false;
   }
 
-  static public ResponseToProcess badRequestResponse(Map<String, String> map){
+  public static ResponseToProcess badRequestResponse(Map<String, String> map){
     map.put("error", "Please fill in all parameters correctly");
     return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, map);
   }
 
-  static public ResponseToProcess badRequestResponse(Map<String, String> map, String message){
+  public static ResponseToProcess badRequestResponse(Map<String, String> map, String message){
     map.put("error", message);
     return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, map);
   }
 
-  static public ResponseToProcess internalErrorResponse(String message, Exception e, Map<String, String> map){
+  public static ResponseToProcess internalErrorResponse(String message, Exception e, Map<String, String> map){
     map.put("error", message);
     map.put("detail", e.toString());
-    return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, map);
+    return new ResponseToProcess(HttpURLConnection.HTTP_INTERNAL_ERROR, map);
   }
 
 }

@@ -21,6 +21,7 @@ import com.stackmob.core.InvalidSchemaException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.*;
 
 import java.net.HttpURLConnection;
@@ -49,6 +50,7 @@ public class ReadGeo implements CustomCodeMethod {
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     LoggerService logger = serviceProvider.getLoggerService(ReadGeo.class);
     Map<String, List<SMObject>> feedback = new HashMap<String, List<SMObject>>();
+    Map<String, String> errMap = new HashMap<String, String>();
 
     SMNear near = new SMNear(           // Near-condition results will always be sorted by distance
             "position",                 // name of GeoField in schema
@@ -74,15 +76,14 @@ public class ReadGeo implements CustomCodeMethod {
       if (results != null && results.size() > 0) {
         feedback.put("Locations found", results);
       } else {
-        HashMap<String, String> errMap = new HashMap<String, String>();
         errMap.put("error", "no match found");
         errMap.put("detail", "no matches for conditions set");
         return new ResponseToProcess(HttpURLConnection.HTTP_NOT_FOUND, errMap); // http 500 - internal server error
       }
-    } catch (DatastoreException dse) {
-      logger.error(dse.getMessage(), dse);
     } catch (InvalidSchemaException ise) {
-      logger.error(ise.getMessage(), ise);
+      return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
+    } catch (DatastoreException dse) {
+      return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 
     return new ResponseToProcess(HttpURLConnection.HTTP_OK, feedback);

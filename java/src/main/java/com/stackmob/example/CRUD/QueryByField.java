@@ -49,7 +49,7 @@ public class QueryByField implements CustomCodeMethod {
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     Map<String, List<SMObject>> feedback = new HashMap<String, List<SMObject>>();
-    HashMap<String, String> errMap = new HashMap<String, String>();
+    Map<String, String> errMap = new HashMap<String, String>();
 
     String make = request.getParams().get("make");
     if (Util.checkForNulls(make)){
@@ -69,11 +69,9 @@ public class QueryByField implements CustomCodeMethod {
         feedback.put(make, results);
       }
 
-    }
-    catch (InvalidSchemaException ise) {
+    } catch (InvalidSchemaException ise) {
       return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
-    }
-    catch (DatastoreException dse) {
+    } catch (DatastoreException dse) {
       return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 

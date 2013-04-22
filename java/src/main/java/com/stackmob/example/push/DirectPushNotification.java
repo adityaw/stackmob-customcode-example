@@ -47,7 +47,7 @@ public class DirectPushNotification implements CustomCodeMethod {
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     LoggerService logger = serviceProvider.getLoggerService(DirectPushNotification.class);
-    HashMap<String, String> errMap = new HashMap<String, String>();
+    Map<String, String> errMap = new HashMap<String, String>();
 
     Map<String, String> payload = new HashMap<String, String>();
     String user = request.getParams().get("user_name");
@@ -66,9 +66,9 @@ public class DirectPushNotification implements CustomCodeMethod {
       logger.debug("Sent push to " + user);
 
     } catch (ServiceNotActivatedException e){
-      logger.error(e.getMessage(), e);
+      return Util.internalErrorResponse("service not activated", e, errMap);
     } catch (PushServiceException e){
-      logger.error(e.getMessage(), e);
+      return Util.internalErrorResponse("Push Service Exception", e, errMap);
     }
 
     return new ResponseToProcess(HttpURLConnection.HTTP_OK, payload);

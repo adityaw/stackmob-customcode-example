@@ -53,6 +53,7 @@ public class WriteGeo implements CustomCodeMethod {
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     LoggerService logger = serviceProvider.getLoggerService(WriteGeo.class);
     Map<String, SMObject> feedback = new HashMap<String, SMObject>();
+    Map<String, String> errMap = new HashMap<String, String>();
 
     String user      = "";
     String latitude  = "";
@@ -69,8 +70,7 @@ public class WriteGeo implements CustomCodeMethod {
       logger.error(pe.getMessage(), pe);
     }
 
-    if (Util.strNullCheck(user) || Util.strNullCheck(latitude) || Util.strNullCheck(longitude)){
-      HashMap<String, String> errMap = new HashMap<String, String>();
+    if (Util.checkForNulls(user, latitude, longitude)){
       errMap.put("error", "Please fill in all parameters correctly");
       return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
     }
@@ -91,10 +91,10 @@ public class WriteGeo implements CustomCodeMethod {
     try {
       result = ds.updateObject("user", new SMString(user), update);
       feedback.put("Updated object", result);
-    } catch (DatastoreException dse) {
-      logger.error(dse.getMessage(), dse);
     } catch (InvalidSchemaException ise) {
-      logger.error(ise.getMessage(), ise);
+      return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
+    } catch (DatastoreException dse) {
+      return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 
     return new ResponseToProcess(HttpURLConnection.HTTP_OK, feedback);

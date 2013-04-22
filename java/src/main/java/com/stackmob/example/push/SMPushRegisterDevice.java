@@ -56,7 +56,7 @@ public class SMPushRegisterDevice implements CustomCodeMethod {
 
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
-    HashMap<String, String> errParams = new HashMap<String, String>();
+    Map<String, String> errParams = new HashMap<String, String>();
     int responseCode = 0;
     String responseBody = "";
     TokenType deviceTokenType;
@@ -96,14 +96,10 @@ public class SMPushRegisterDevice implements CustomCodeMethod {
       service.registerTokenForUser(username, token);
       responseCode = HttpURLConnection.HTTP_OK;
       responseBody = "token saved";
-    } catch (ServiceNotActivatedException e) {
-      logger.error("error service not active" + e.toString());
-      responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR; // error 500
-      responseBody = e.toString();
-    } catch (DatastoreException e) {
-      logger.error("DataStore Exception: " + e.toString(), e);
-      responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;
-      responseBody = e.toString();
+    } catch (ServiceNotActivatedException e){
+      return Util.internalErrorResponse("service not activated", e, errParams);
+    } catch (DatastoreException dse) {
+      return Util.internalErrorResponse("datastore_exception", dse, errParams);  // http 500 - internal server error
     }
 
     logger.debug("End register device token code");

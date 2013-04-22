@@ -50,7 +50,7 @@ public class DeleteRelation implements CustomCodeMethod {
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     Map<String, SMObject> feedback = new HashMap<String, SMObject>();
-    HashMap<String, String> errMap = new HashMap<String, String>();
+    Map<String, String> errMap = new HashMap<String, String>();
     LoggerService logger = serviceProvider.getLoggerService(DeleteRelation.class);
 
     DataService ds = serviceProvider.getDataService();
@@ -73,9 +73,9 @@ public class DeleteRelation implements CustomCodeMethod {
        */
       ds.removeRelatedObjects("user", new SMString(owner), "garage", valuesToRemove, false);
     } catch (InvalidSchemaException ise) {
-      logger.error(ise.getMessage(), ise);
+      return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
     } catch (DatastoreException dse) {
-      logger.error(dse.getMessage(), dse);
+      return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 
     return new ResponseToProcess(HttpURLConnection.HTTP_OK, feedback);

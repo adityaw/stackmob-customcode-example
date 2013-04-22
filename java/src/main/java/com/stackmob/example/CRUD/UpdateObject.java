@@ -56,7 +56,7 @@ public class UpdateObject implements CustomCodeMethod {
 
     LoggerService logger = serviceProvider.getLoggerService(UpdateObject.class);
     logger.debug(request.getBody());
-    HashMap<String, String> errMap = new HashMap<String, String>();
+    Map<String, String> errMap = new HashMap<String, String>();
 
     /* The following try/catch block shows how to properly fetch parameters for PUT/POST operations
      * from the JSON request body
@@ -95,11 +95,9 @@ public class UpdateObject implements CustomCodeMethod {
       result = ds.updateObject("car", new SMString(carID), update);
       feedback.put("updated object", result);
 
-    }
-    catch (InvalidSchemaException ise) {
+    } catch (InvalidSchemaException ise) {
       return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
-    }
-    catch (DatastoreException dse) {
+    } catch (DatastoreException dse) {
       return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 

@@ -49,7 +49,7 @@ public class DeleteMultiple implements CustomCodeMethod {
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     Map<String, List<SMObject>> feedback = new HashMap<String, List<SMObject>>();
-    HashMap<String, String> errMap = new HashMap<String, String>();
+    Map<String, String> errMap = new HashMap<String, String>();
 
     List<SMCondition> query = new ArrayList<SMCondition>();
     DataService ds = serviceProvider.getDataService();
@@ -73,12 +73,9 @@ public class DeleteMultiple implements CustomCodeMethod {
           ds.deleteObject("car", carID); // Finally the object gets deleted by ID.
         }
       }
-
-    }
-    catch (InvalidSchemaException ise) {
+    } catch (InvalidSchemaException ise) {
       return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
-    }
-    catch (DatastoreException dse) {
+    } catch (DatastoreException dse) {
       return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 

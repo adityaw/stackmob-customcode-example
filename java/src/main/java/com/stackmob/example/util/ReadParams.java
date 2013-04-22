@@ -19,6 +19,8 @@ package com.stackmob.example.util;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
+import com.stackmob.sdkapi.LoggerService;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.SMInt;
 import com.stackmob.sdkapi.SMString;
@@ -47,6 +49,9 @@ public class ReadParams implements CustomCodeMethod {
 
   @Override
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
+    LoggerService logger = serviceProvider.getLoggerService(ReadParams.class);
+    Map<String, String> errMap = new HashMap<String, String>();
+
     String model = "";
     String make = "";
     String year = "";
@@ -63,6 +68,8 @@ public class ReadParams implements CustomCodeMethod {
       year = (String) jsonObject.get("year");
     } catch (ParseException pe) {
       // Log your error
+      logger.error(pe.getMessage(), pe);
+      return Util.badRequestResponse(errMap, "Error Parsing Input");
     }
 
     Map<String, Object> map = new HashMap<String, Object>();

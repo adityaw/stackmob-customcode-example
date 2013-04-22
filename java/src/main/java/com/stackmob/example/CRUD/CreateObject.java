@@ -65,6 +65,10 @@ public class CreateObject implements CustomCodeMethod {
     // JSON object gets passed into the StackMob Logs
     logger.debug(request.getBody());
 
+    // I'll be using these maps to print messages to console as feedback to the operation
+    Map<String, SMValue> feedback = new HashMap<String, SMValue>();
+    Map<String, String> errMap = new HashMap<String, String>();
+
     /* The following try/catch block shows how to properly fetch parameters for PUT/POST operations
      * from the JSON request body
      */
@@ -79,11 +83,8 @@ public class CreateObject implements CustomCodeMethod {
       year = (String) jsonObject.get("year");
     } catch (ParseException pe) {
       logger.error(pe.getMessage(), pe);
+      return Util.badRequestResponse(errMap);
     }
-
-    // I'll be using these maps to print messages to console as feedback to the operation
-    Map<String, SMValue> feedback = new HashMap<String, SMValue>();
-    HashMap<String, String> errMap = new HashMap<String, String>();
 
     if (Util.checkForNulls(model, make, year)){
       return Util.badRequestResponse(errMap);

@@ -21,6 +21,7 @@ import com.stackmob.core.DatastoreException;
 import com.stackmob.core.customcode.CustomCodeMethod;
 import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
+import com.stackmob.example.Util;
 import com.stackmob.sdkapi.SDKServiceProvider;
 import com.stackmob.sdkapi.*;
 
@@ -48,6 +49,7 @@ public class PaginateResults implements CustomCodeMethod {
   public ResponseToProcess execute(ProcessedAPIRequest request, SDKServiceProvider serviceProvider) {
     LoggerService logger = serviceProvider.getLoggerService(PaginateResults.class);
     Map<String, List<SMObject>> feedback = new HashMap<String, List<SMObject>>();
+    Map<String, String> errMap = new HashMap<String, String>();
 
     // Make a new ResultFilter that starts at 0 and ends at 9 to paginate at every 10 results
     ResultFilters filters = new ResultFilters(0, 9, null, null);
@@ -61,9 +63,9 @@ public class PaginateResults implements CustomCodeMethod {
         feedback.put("results", results);
       }
     } catch (InvalidSchemaException ise) {
-      logger.error(ise.getMessage(), ise);
+      return Util.internalErrorResponse("invalid_schema", ise, errMap);  // http 500 - internal server error
     } catch (DatastoreException dse) {
-      logger.error(dse.getMessage(), dse);
+      return Util.internalErrorResponse("datastore_exception", dse, errMap);  // http 500 - internal server error
     }
 
     return new ResponseToProcess(HttpURLConnection.HTTP_OK, feedback);
