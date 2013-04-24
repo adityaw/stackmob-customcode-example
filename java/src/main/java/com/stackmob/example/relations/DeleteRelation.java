@@ -58,7 +58,7 @@ public class DeleteRelation implements CustomCodeMethod {
 
     String carID = request.getParams().get("car_ID");
     String owner = request.getParams().get("user_name");
-    if (Util.checkForNulls(carID, owner)){
+    if (Util.hasNulls(carID, owner)){
       return Util.badRequestResponse(errMap);
     }
 

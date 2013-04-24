@@ -53,7 +53,7 @@ public class OneStepCreateRelate implements CustomCodeMethod {
     LoggerService logger = serviceProvider.getLoggerService(OneStepCreateRelate.class);
 
     String owner = request.getParams().get("user_name");
-    if (Util.checkForNulls(owner)){
+    if (Util.hasNulls(owner)){
       return Util.badRequestResponse(errMap);
     }
 

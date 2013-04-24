@@ -54,7 +54,7 @@ public class DeleteObject implements CustomCodeMethod {
     DataService ds = serviceProvider.getDataService();
     String carID = request.getParams().get("car_ID");
 
-    if (Util.checkForNulls(carID)){
+    if (Util.hasNulls(carID)){
       return Util.badRequestResponse(errMap);
     }
 

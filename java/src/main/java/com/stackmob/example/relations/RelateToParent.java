@@ -58,7 +58,7 @@ public class RelateToParent implements CustomCodeMethod {
 
     String carID = request.getParams().get("car_ID");
     String owner = request.getParams().get("user_name");
-    if (Util.checkForNulls(owner, carID)){
+    if (Util.hasNulls(owner, carID)){
       return Util.badRequestResponse(errMap);
     }
 

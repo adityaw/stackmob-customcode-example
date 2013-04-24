@@ -68,11 +68,11 @@ public class SMPushRegisterDevice implements CustomCodeMethod {
     String tokenType = request.getParams().get("token_type");  // TOKEN TYPE should be YOUR device type (ios / gcm)
     logger.debug("Device token: " + deviceToken + ", " + "Token Type: " + tokenType);
 
-    if (Util.strNullCheck(deviceToken)) {
+    if (Util.isEmpty(deviceToken)) {
       return Util.badRequestResponse(errParams, "the device token passed was null or empty."); // http 400 - bad request
     }
 
-    if (Util.strNullCheck(tokenType)) {
+    if (Util.isEmpty(tokenType)) {
       return Util.badRequestResponse(errParams, "the token type passed was null or empty."); // http 400 - bad request
     }
 

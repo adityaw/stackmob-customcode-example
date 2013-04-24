@@ -57,7 +57,7 @@ public class DeleteMultiple implements CustomCodeMethod {
 
     String make = request.getParams().get("make");
 
-    if (Util.checkForNulls(make)){
+    if (Util.hasNulls(make)){
       return Util.badRequestResponse(errMap);
     }
 

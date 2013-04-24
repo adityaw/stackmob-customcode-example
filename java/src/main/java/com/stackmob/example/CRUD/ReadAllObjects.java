@@ -23,9 +23,6 @@ import com.stackmob.core.rest.ProcessedAPIRequest;
 import com.stackmob.core.rest.ResponseToProcess;
 import com.stackmob.example.Util;
 import com.stackmob.sdkapi.*;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.net.HttpURLConnection;
 import java.util.*;
@@ -62,7 +59,7 @@ public class ReadAllObjects implements CustomCodeMethod {
     List<SMObject> results;
 
     String schema = request.getParams().get("schema_name");
-    if (Util.checkForNulls(schema)){
+    if (Util.hasNulls(schema)){
       return Util.badRequestResponse(errMap);
     }
 

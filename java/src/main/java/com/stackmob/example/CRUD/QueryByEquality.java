@@ -54,7 +54,7 @@ public class QueryByEquality implements CustomCodeMethod {
     List<SMCondition> query = new ArrayList<SMCondition>();
 
     String year = request.getParams().get("year");
-    if (Util.checkForNulls(year)){
+    if (Util.hasNulls(year)){
       return Util.badRequestResponse(errMap);
     }
 

@@ -54,7 +54,7 @@ public class ReadObject implements CustomCodeMethod {
     Map<String, String> errMap = new HashMap<String, String>();
 
     String carID = request.getParams().get("car_ID");
-    if (Util.checkForNulls(carID)){
+    if (Util.hasNulls(carID)){
       return Util.badRequestResponse(errMap);
     }
 

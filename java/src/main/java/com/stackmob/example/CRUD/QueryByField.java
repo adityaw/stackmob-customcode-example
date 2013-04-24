@@ -52,7 +52,7 @@ public class QueryByField implements CustomCodeMethod {
     Map<String, String> errMap = new HashMap<String, String>();
 
     String make = request.getParams().get("make");
-    if (Util.checkForNulls(make)){
+    if (Util.hasNulls(make)){
       return Util.badRequestResponse(errMap);
     }
 

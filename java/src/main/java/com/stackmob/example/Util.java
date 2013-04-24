@@ -14,13 +14,13 @@ import java.util.Map;
 
 public class Util {
 
-  public static Boolean strNullCheck(String str) {
+  public static Boolean isEmpty(String str) {
     return (str == null || str.isEmpty());
   }
 
-  public static Boolean checkForNulls(String... strings){
+  public static Boolean hasNulls(String... strings){
     for (String s : strings){
-      if(strNullCheck(s)){
+      if(isEmpty(s)){
         return true;
       }
     }

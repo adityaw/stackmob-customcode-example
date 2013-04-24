@@ -86,7 +86,7 @@ public class CreateObject implements CustomCodeMethod {
       return Util.badRequestResponse(errMap);
     }
 
-    if (Util.checkForNulls(model, make, year)){
+    if (Util.hasNulls(model, make, year)){
       return Util.badRequestResponse(errMap);
     }
 

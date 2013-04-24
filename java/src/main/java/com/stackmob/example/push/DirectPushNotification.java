@@ -52,7 +52,7 @@ public class DirectPushNotification implements CustomCodeMethod {
     Map<String, String> payload = new HashMap<String, String>();
     String user = request.getParams().get("user_name");
 
-    if (Util.checkForNulls(user)){
+    if (Util.hasNulls(user)){
       return Util.badRequestResponse(errMap);
     }
 

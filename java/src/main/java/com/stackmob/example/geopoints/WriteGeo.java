@@ -70,7 +70,7 @@ public class WriteGeo implements CustomCodeMethod {
       logger.error(pe.getMessage(), pe);
     }
 
-    if (Util.checkForNulls(user, latitude, longitude)){
+    if (Util.hasNulls(user, latitude, longitude)){
       errMap.put("error", "Please fill in all parameters correctly");
       return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
     }

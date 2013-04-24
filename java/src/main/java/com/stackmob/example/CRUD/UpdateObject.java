@@ -74,7 +74,7 @@ public class UpdateObject implements CustomCodeMethod {
       logger.error(pe.getMessage(), pe);
     }
 
-    if (Util.checkForNulls(year, carID)){
+    if (Util.hasNulls(year, carID)){
       return Util.badRequestResponse(errMap);
     }
 
