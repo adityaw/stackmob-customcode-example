@@ -68,11 +68,11 @@ public class WriteGeo implements CustomCodeMethod {
       longitude = (String) jsonObject.get("Longitude");
     } catch (ParseException pe) {
       logger.error(pe.getMessage(), pe);
+      return Util.badRequestResponse(errMap, pe.getMessage());
     }
 
     if (Util.hasNulls(user, latitude, longitude)){
-      errMap.put("error", "Please fill in all parameters correctly");
-      return new ResponseToProcess(HttpURLConnection.HTTP_BAD_REQUEST, errMap);
+      return Util.badRequestResponse(errMap, "Please fill in all parameters correctly");
     }
 
     DataService ds = serviceProvider.getDataService();
@@ -86,6 +86,7 @@ public class WriteGeo implements CustomCodeMethod {
       update.add(new SMSet("position", new SMObject(geoPoint)));
     } catch (NumberFormatException nfe) {
       logger.error(nfe.getMessage(), nfe);
+      return Util.badRequestResponse(errMap, nfe.getMessage());
     }
 
     try {
