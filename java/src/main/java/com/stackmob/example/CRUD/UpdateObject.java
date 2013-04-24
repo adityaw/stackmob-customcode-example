@@ -72,6 +72,7 @@ public class UpdateObject implements CustomCodeMethod {
 
     } catch (ParseException pe) {
       logger.error(pe.getMessage(), pe);
+      return Util.badRequestResponse(errMap,  pe.getMessage());
     }
 
     if (Util.hasNulls(year, carID)){

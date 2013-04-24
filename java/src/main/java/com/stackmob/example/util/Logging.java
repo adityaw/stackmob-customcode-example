@@ -77,7 +77,7 @@ public class Logging implements CustomCodeMethod {
     } catch (ParseException pe) {
       // error("Message", Throwable)
       logger.error(pe.getMessage(), pe);
-      return Util.internalErrorResponse("Parse Exception", pe, errMap);
+      return Util.badRequestResponse(errMap, pe.getMessage());
     }
 
     Map<String, Object> map = new HashMap<String, Object>();
