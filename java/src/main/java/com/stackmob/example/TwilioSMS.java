@@ -64,7 +64,7 @@ public class TwilioSMS implements CustomCodeMethod {
     int responseCode = 0;
     String responseBody = "";
 
-	LoggerService logger = serviceProvider.getLoggerService(TwilioSMS.class);
+    LoggerService logger = serviceProvider.getLoggerService(TwilioSMS.class);
       
     // TO phonenumber should be YOUR cel phone
     String toPhoneNumber = request.getParams().get("tophonenumber");
@@ -126,19 +126,19 @@ public class TwilioSMS implements CustomCodeMethod {
       responseBody = resp.getBody();
     } catch(TimeoutException e) {
       logger.error(e.getMessage(), e);
-      responseCode = HttpURLConnection.HTTP_BAD_GATEWAY;;
+      responseCode = HttpURLConnection.HTTP_BAD_GATEWAY;
       responseBody = e.getMessage();
     } catch(AccessDeniedException e) {
       logger.error(e.getMessage(), e);
-      responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;;
+      responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;
       responseBody = e.getMessage();
     } catch(MalformedURLException e) {
       logger.error(e.getMessage(), e);
-      responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;;
+      responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;
       responseBody = e.getMessage();
     } catch(ServiceNotActivatedException e) {
       logger.error(e.getMessage(), e);
-      responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;;
+      responseCode = HttpURLConnection.HTTP_INTERNAL_ERROR;
       responseBody = e.getMessage();
     }
       
