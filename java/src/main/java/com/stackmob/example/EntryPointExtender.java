@@ -40,6 +40,7 @@ public class EntryPointExtender extends JarEntryObject {
     list.add(new TwilioSMS());
     list.add(new SendGrid());
     list.add(new Stripe());
+    list.add(new Increment());
     /* Basic CRUD operations on schemas */
     list.add(new CreateObject());
     list.add(new ReadObject());
